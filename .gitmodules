@@ -1,0 +1,10 @@
+[submodule "pkgbuilds"]
+	path = pkgbuilds
+	url = git@github.com:tweakz-fydetab-hacks/pkgbuilds.git
+
+[submodule "images"]
+	path = images
+	url = git@github.com:tweakz-fydetab-hacks/images.git
+[submodule "calamares-settings"]
+	path = calamares-settings
+	url = git@github.com:tweakz-fydetab-hacks/calamares-settings.git

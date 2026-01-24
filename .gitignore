@@ -1,0 +1,18 @@
+# Build artifacts (submodules have their own .gitignore)
+*.pkg.tar.zst
+*.img
+*.img.xz
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Environment
+.envrc
+
+# OS files
+.DS_Store
+Thumbs.db

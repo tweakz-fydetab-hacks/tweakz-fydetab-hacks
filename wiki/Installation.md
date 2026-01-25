@@ -98,6 +98,37 @@ ls /dev/dri/
 glxinfo | grep "OpenGL renderer"
 ```
 
+### Setup Waydroid (Android Apps)
+
+Waydroid is pre-installed and configured for the Panthor GPU. On first boot, it will automatically initialize.
+
+To test Waydroid:
+
+```bash
+# Run from GNOME desktop (not SSH)
+waydroid-test
+
+# Or launch directly
+waydroid show-full-ui
+```
+
+If Waydroid didn't initialize:
+
+```bash
+# Check initialization status
+systemctl status waydroid-panthor-init
+
+# Manual initialization
+sudo systemctl start waydroid-panthor-init
+```
+
+Verify binder devices are working:
+
+```bash
+ls -la /dev/binderfs/
+# Should show: binder, hwbinder, vndbinder
+```
+
 ## Installing to eMMC
 
 After testing on SD card, you can install to internal eMMC.
@@ -123,8 +154,8 @@ sudo reboot
 If you have a working Arch installation on eMMC and just want the custom kernel:
 
 ```bash
-cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab
-sudo pacman -U linux-fydetab-*.pkg.tar.zst
+cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
+sudo pacman -U linux-fydetab-itztweak-*.pkg.tar.zst
 ```
 
 ## Troubleshooting

@@ -13,8 +13,8 @@ The FydeTab Duo uses U-Boot as its bootloader:
 
 **Default paths:**
 ```
-Kernel:    /boot/vmlinuz-linux-fydetab
-Initramfs: /boot/initramfs-linux-fydetab.img
+Kernel:    /boot/vmlinuz-linux-fydetab-itztweak
+Initramfs: /boot/initramfs-linux-fydetab-itztweak.img
 DTB:       /boot/dtbs/rockchip/rk3588s-fydetab-duo.dtb
 ```
 
@@ -46,15 +46,15 @@ You need ONE of:
 
 4. At U-Boot prompt, boot from backup:
    ```
-   setenv linux_image /boot/vmlinuz-linux-fydetab.backup
-   setenv initrd /boot/initramfs-linux-fydetab.img.backup
+   setenv linux_image /boot/vmlinuz-linux-fydetab-itztweak.backup
+   setenv initrd /boot/initramfs-linux-fydetab-itztweak.img.backup
    boot
    ```
 
 5. Once booted, restore backup permanently:
    ```bash
-   sudo cp /boot/vmlinuz-linux-fydetab.backup /boot/vmlinuz-linux-fydetab
-   sudo cp /boot/initramfs-linux-fydetab.img.backup /boot/initramfs-linux-fydetab.img
+   sudo cp /boot/vmlinuz-linux-fydetab-itztweak.backup /boot/vmlinuz-linux-fydetab-itztweak
+   sudo cp /boot/initramfs-linux-fydetab-itztweak.img.backup /boot/initramfs-linux-fydetab-itztweak.img
    ```
 
 ## Option 2: Boot from SD Card
@@ -74,8 +74,8 @@ You need ONE of:
 
 4. Restore kernel backup:
    ```bash
-   sudo cp /mnt/boot/vmlinuz-linux-fydetab.backup /mnt/boot/vmlinuz-linux-fydetab
-   sudo cp /mnt/boot/initramfs-linux-fydetab.img.backup /mnt/boot/initramfs-linux-fydetab.img
+   sudo cp /mnt/boot/vmlinuz-linux-fydetab-itztweak.backup /mnt/boot/vmlinuz-linux-fydetab-itztweak
+   sudo cp /mnt/boot/initramfs-linux-fydetab-itztweak.img.backup /mnt/boot/initramfs-linux-fydetab-itztweak.img
    ```
 
 5. Unmount and reboot:
@@ -116,8 +116,8 @@ If U-Boot itself is corrupted:
 
 Before any kernel update:
 ```bash
-sudo cp /boot/vmlinuz-linux-fydetab /boot/vmlinuz-linux-fydetab.backup
-sudo cp /boot/initramfs-linux-fydetab.img /boot/initramfs-linux-fydetab.img.backup
+sudo cp /boot/vmlinuz-linux-fydetab-itztweak /boot/vmlinuz-linux-fydetab-itztweak.backup
+sudo cp /boot/initramfs-linux-fydetab-itztweak.img /boot/initramfs-linux-fydetab-itztweak.img.backup
 ```
 
 ### Keep Bootable SD Card Ready

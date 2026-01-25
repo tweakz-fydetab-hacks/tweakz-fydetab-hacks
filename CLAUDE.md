@@ -10,11 +10,14 @@ This is the main repository for the tweakz-fydetab-hacks project - a personal do
 
 ```
 tweakz-fydetab-hacks/
-├── pkgbuilds/          # Submodule: Arch Linux PKGBUILDs
-├── images/             # Submodule: ImageForge build profiles
-├── scripts/            # Build automation scripts
-│   └── tests/          # Hardware test scripts
-└── wiki/               # GitHub wiki documentation
+├── pkgbuilds/                      # Package submodules
+│   ├── linux-fydetab-itztweak/     # Custom kernel
+│   ├── waydroid-panthor-images/    # Waydroid Android images
+│   └── waydroid-panthor-config/    # Waydroid services
+├── images/                         # Submodule: ImageForge build profiles
+├── scripts/                        # Build automation scripts
+│   └── tests/                      # Hardware test scripts
+└── wiki/                           # GitHub wiki documentation
 ```
 
 ## Build Workflow
@@ -64,9 +67,9 @@ git add pkgbuilds  # Update parent's submodule reference
 
 | File | Purpose |
 |------|---------|
-| `pkgbuilds/linux-fydetab/PKGBUILD` | Kernel package definition |
-| `pkgbuilds/linux-fydetab/config` | Kernel .config |
-| `pkgbuilds/linux-fydetab/build.sh` | Kernel build script with logging |
+| `pkgbuilds/linux-fydetab-itztweak/PKGBUILD` | Kernel package definition |
+| `pkgbuilds/linux-fydetab-itztweak/config` | Kernel .config |
+| `pkgbuilds/linux-fydetab-itztweak/build.sh` | Kernel build script with logging |
 | `pkgbuilds/waydroid-panthor-images/PKGBUILD` | Waydroid Android images only |
 | `pkgbuilds/waydroid-panthor-config/PKGBUILD` | Waydroid binder/init services |
 | `images/fydetab-arch/profiledef` | ImageForge profile |
@@ -99,24 +102,26 @@ Key wiki pages:
 - Recovery.md - Boot recovery procedures
 - Update-Procedure.md - Safe update workflow
 
-## Git Remotes
+## Submodule Remotes
 
-Both submodules have dual remotes configured:
+Each package submodule is an independent repo:
 
 ```sh
-# In pkgbuilds/
-origin    -> tweakz-fydetab-hacks/pkgbuilds (push here)
-upstream  -> Linux-for-Fydetab-Duo/pkgbuilds (pull updates from here)
+# Kernel
+pkgbuilds/linux-fydetab-itztweak -> github.com/tweakz-fydetab-hacks/linux-fydetab-itztweak
 
-# Sync from upstream
-git fetch upstream
-git merge upstream/main
+# Waydroid
+pkgbuilds/waydroid-panthor-images -> github.com/tweakz-fydetab-hacks/waydroid-panthor-images
+pkgbuilds/waydroid-panthor-config -> github.com/tweakz-fydetab-hacks/waydroid-panthor-config
+
+# Images
+images/ -> github.com/tweakz-fydetab-hacks/fydetab-images
 ```
 
 ## Workflow Notes
 
 - **Testing**: Always test kernel changes on SD card before installing to eMMC
-- **Logs**: Build logs are saved to `pkgbuilds/linux-fydetab/logs/`
+- **Logs**: Build logs are saved to `pkgbuilds/linux-fydetab-itztweak/logs/`
 - **Recovery**: Keep a bootable SD card ready when doing kernel development
 
 ## Test Framework

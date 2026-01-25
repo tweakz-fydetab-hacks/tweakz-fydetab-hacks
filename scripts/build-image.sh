@@ -42,23 +42,39 @@ copy_local_packages() {
     log_info "Copying built packages to local cache..."
 
     # Kernel packages
-    if ls "$PKGBUILDS_DIR/linux-fydetab/"*.pkg.tar.zst 1>/dev/null 2>&1; then
-        cp -v "$PKGBUILDS_DIR/linux-fydetab/"*.pkg.tar.zst "$LOCAL_PKGS_DIR/"
+    if ls "$PKGBUILDS_DIR/linux-fydetab-itztweak/"*.pkg.tar.zst 1>/dev/null 2>&1; then
+        cp -v "$PKGBUILDS_DIR/linux-fydetab-itztweak/"*.pkg.tar.zst "$LOCAL_PKGS_DIR/"
     else
         log_warn "No kernel packages found. Run build-packages.sh first?"
     fi
 
-    # Other packages (if built locally)
-    for pkg_dir in mutter fydetabduo-post-install; do
+    # Other packages (if built locally) - check both .zst and uncompressed .tar
+    for pkg_dir in mutter fydetabduo-post-install waydroid-panthor-images; do
         if ls "$PKGBUILDS_DIR/$pkg_dir/"*.pkg.tar.zst 1>/dev/null 2>&1; then
             cp -v "$PKGBUILDS_DIR/$pkg_dir/"*.pkg.tar.zst "$LOCAL_PKGS_DIR/"
+        elif ls "$PKGBUILDS_DIR/$pkg_dir/"*.pkg.tar 1>/dev/null 2>&1; then
+            cp -v "$PKGBUILDS_DIR/$pkg_dir/"*.pkg.tar "$LOCAL_PKGS_DIR/"
         fi
     done
 
-    # Create package database for local repo
-    log_info "Creating local package database..."
+    # Rebuild package database from scratch to avoid stale entries
+    log_info "Rebuilding local package database..."
     cd "$LOCAL_PKGS_DIR"
-    repo-add -n local.db.tar.gz *.pkg.tar.zst 2>/dev/null || true
+
+    # Remove old database files to ensure clean state
+    rm -f fydetab-local.db* fydetab-local.files*
+
+    # Add all packages (handle case where one pattern doesn't match)
+    local pkgs=()
+    for pkg in *.pkg.tar.zst *.pkg.tar; do
+        [ -f "$pkg" ] && pkgs+=("$pkg")
+    done
+
+    if [ ${#pkgs[@]} -gt 0 ]; then
+        repo-add fydetab-local.db.tar.gz "${pkgs[@]}"
+    else
+        log_warn "No packages found in local-pkgs!"
+    fi
 }
 
 # Update pacman.conf with correct local repo path

@@ -26,7 +26,7 @@ log_error() {
 }
 
 # Check if pkgbuilds submodule is initialized
-if [ ! -d "$PKGBUILDS_DIR/linux-fydetab" ]; then
+if [ ! -d "$PKGBUILDS_DIR/linux-fydetab-itztweak" ]; then
     log_error "pkgbuilds submodule not initialized"
     log_info "Run: git submodule update --init --recursive"
     exit 1
@@ -56,8 +56,8 @@ done
 
 # Build the kernel (most important, takes longest)
 build_kernel() {
-    log_info "Building linux-fydetab kernel..."
-    cd "$PKGBUILDS_DIR/linux-fydetab"
+    log_info "Building linux-fydetab-itztweak kernel..."
+    cd "$PKGBUILDS_DIR/linux-fydetab-itztweak"
 
     if [ "$CLEAN_BUILD" = true ]; then
         log_info "Clean build requested, removing src/ and pkg/"
@@ -67,9 +67,9 @@ build_kernel() {
     fi
 
     # Check for built packages
-    if ls linux-fydetab-*.pkg.tar.zst 1>/dev/null 2>&1; then
+    if ls linux-fydetab-itztweak-*.pkg.tar.zst 1>/dev/null 2>&1; then
         log_info "Kernel packages built successfully:"
-        ls -la linux-fydetab-*.pkg.tar.zst
+        ls -la linux-fydetab-itztweak-*.pkg.tar.zst
     else
         log_error "Kernel build failed - no packages found"
         exit 1
@@ -111,14 +111,15 @@ log_info "PKGBUILDs directory: $PKGBUILDS_DIR"
 build_kernel
 
 if [ "$KERNEL_ONLY" = false ]; then
-    # Build other packages that might need local builds
-    # Most packages can be installed from Fyde repo, so this is optional
+    # Build waydroid-panthor-images (Android system/vendor images)
+    build_package "waydroid-panthor-images"
+
+    # Build waydroid-panthor-config (binder services, init scripts)
+    build_package "waydroid-panthor-config"
 
     # Uncomment to build additional packages:
     # build_package "mutter"
     # build_package "fydetabduo-post-install"
-
-    log_info "Additional packages can be built by uncommenting in this script"
 fi
 
 log_info "Package build complete!"

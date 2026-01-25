@@ -38,7 +38,7 @@ git submodule update --init --recursive
 ### Manual Kernel Build
 
 ```bash
-cd pkgbuilds/linux-fydetab
+cd pkgbuilds/linux-fydetab-itztweak
 
 # Resume build
 ./build.sh
@@ -114,7 +114,7 @@ If the scripts don't set up the cache:
 mkdir -p images/fydetab-arch/local-pkgs
 
 # Copy packages
-cp pkgbuilds/linux-fydetab/*.pkg.tar.zst images/fydetab-arch/local-pkgs/
+cp pkgbuilds/linux-fydetab-itztweak/*.pkg.tar.zst images/fydetab-arch/local-pkgs/
 
 # Create repo database
 cd images/fydetab-arch/local-pkgs
@@ -126,12 +126,11 @@ repo-add local.db.tar.gz *.pkg.tar.zst
 ### To SD Card
 
 ```bash
-# Using dd
-xzcat images/out/ArchLinux-ARM-FydeTab-Duo-*.img.xz | sudo dd of=/dev/sdX bs=4M status=progress
+# Using the flash script (recommended)
+./scripts/flash-sd.sh
 
-# Using xz + dd separately
-xz -d images/out/ArchLinux-ARM-FydeTab-Duo-*.img.xz
-sudo dd if=images/out/ArchLinux-ARM-FydeTab-Duo-*.img of=/dev/sdX bs=4M status=progress
+# Or manually with dd
+xzcat images/out/ArchLinux-ARM-FydeTab-Duo-*.img.xz | sudo dd of=/dev/sdX bs=4M status=progress
 ```
 
 ### To eMMC (from running system)
@@ -162,7 +161,7 @@ Edit `images/fydetab-arch/profiledef` for:
 
 Check logs:
 ```bash
-tail -f pkgbuilds/linux-fydetab/logs/build-latest.log
+tail -f pkgbuilds/linux-fydetab-itztweak/logs/build-latest.log
 ```
 
 Monitor system:
@@ -182,3 +181,87 @@ Kernel builds can OOM on 8GB RAM. Options:
 1. Check package is in `packages.aarch64`
 2. Check pacman.conf has correct repos
 3. If using local cache, verify package was copied and database updated
+
+## Test Workflow
+
+The repository includes a test framework for verifying hardware functionality after flashing.
+
+### Quick Start
+
+```bash
+# After flashing image to SD
+./scripts/flash-sd.sh
+
+# Copy test scripts to SD
+./scripts/copy-test-scripts.sh
+
+# Copy waydroid packages (optional)
+./scripts/copy-waydroid-pkgs.sh
+```
+
+### On the FydeTab
+
+After booting from SD card:
+
+```bash
+# Run all tests
+~/tests/run-all-tests.sh
+
+# Or click "FydeTab Tests" in app menu
+```
+
+### Retrieving Results
+
+Back on your development machine:
+
+```bash
+# Get results from SD card
+./scripts/get-sd-results.sh
+
+# Results are in test-results/<timestamp>/
+```
+
+### Test Coverage
+
+| Test | Verifies |
+|------|----------|
+| `test-gpu.sh` | Panthor driver, DRI devices, no software rendering |
+| `test-display.sh` | rockchip-drm, resolution, compositor |
+| `test-touch.sh` | Himax driver, input devices |
+| `test-wifi.sh` | brcmfmac, NetworkManager, scanning |
+| `test-bluetooth.sh` | btusb, hci0 device |
+| `test-audio.sh` | ALSA devices, PipeWire, HDMI audio |
+| `test-usbc.sh` | fusb302, Type-C port, power delivery |
+| `test-battery.sh` | sbs-battery, charger, capacity |
+| `test-waydroid.sh` | Binder setup, waydroid init |
+| `test-vscodium.sh` | Interactive Wayland app test |
+| `test-system.sh` | Failed services, boot media, health |
+
+### SD Card Results Location
+
+Test results are saved to:
+```
+/home/arch/test-results/<timestamp>/
+```
+
+When mounted on dev machine:
+```
+/run/media/$USER/ROOTFS/@home/arch/test-results/<timestamp>/
+```
+
+### Building Waydroid Packages
+
+Waydroid is not included in the base image for faster builds. Build separately:
+
+```bash
+# Build images (5GB download, only needed once)
+cd pkgbuilds/waydroid-panthor-images
+makepkg -s
+
+# Build config
+cd ../waydroid-panthor-config
+makepkg -s
+
+# Copy to SD card
+./scripts/copy-waydroid-pkgs.sh
+```

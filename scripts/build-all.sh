@@ -44,7 +44,7 @@ while [[ $# -gt 0 ]]; do
             echo "  clean    Clean build (removes src/pkg directories)"
             echo ""
             echo "This script builds:"
-            echo "  1. Kernel packages (linux-fydetab)"
+            echo "  1. Kernel packages (linux-fydetab-itztweak)"
             echo "  2. Bootable image with local packages"
             exit 0
             ;;

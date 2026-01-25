@@ -4,7 +4,7 @@ This document outlines the correct order of operations for updating your system 
 
 ## Why Order Matters
 
-The `linux-fydetab` package may depend on specific kernel headers or module versions. Updating system packages before rebuilding the kernel can cause mismatches.
+The `linux-fydetab-itztweak` package may depend on specific kernel headers or module versions. Updating system packages before rebuilding the kernel can cause mismatches.
 
 ## Quick Reference
 
@@ -24,8 +24,8 @@ The `linux-fydetab` package may depend on specific kernel headers or module vers
 Always backup before changes:
 
 ```bash
-sudo cp /boot/vmlinuz-linux-fydetab /boot/vmlinuz-linux-fydetab.backup
-sudo cp /boot/initramfs-linux-fydetab.img /boot/initramfs-linux-fydetab.img.backup
+sudo cp /boot/vmlinuz-linux-fydetab-itztweak /boot/vmlinuz-linux-fydetab-itztweak.backup
+sudo cp /boot/initramfs-linux-fydetab-itztweak.img /boot/initramfs-linux-fydetab-itztweak.img.backup
 ```
 
 ### Step 2: Check for Source Updates (Optional)
@@ -33,14 +33,14 @@ sudo cp /boot/initramfs-linux-fydetab.img /boot/initramfs-linux-fydetab.img.back
 If updating kernel version:
 
 ```bash
-cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab
+cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
 # Check PKGBUILD for source URL and update _commit or version
 ```
 
 ### Step 3: Rebuild Kernel
 
 ```bash
-cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab
+cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
 ./build.sh clean    # Fresh build
 # OR
 ./build.sh          # Incremental build
@@ -54,13 +54,13 @@ ls -la *.pkg.tar.zst
 ### Step 4: Install New Kernel
 
 ```bash
-cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab
-sudo pacman -U linux-fydetab-*.pkg.tar.zst
+cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
+sudo pacman -U linux-fydetab-itztweak-*.pkg.tar.zst
 ```
 
 For DKMS modules (nvidia, virtualbox, etc.):
 ```bash
-sudo pacman -U linux-fydetab-*.pkg.tar.zst linux-fydetab-headers-*.pkg.tar.zst
+sudo pacman -U linux-fydetab-itztweak-*.pkg.tar.zst linux-fydetab-itztweak-headers-*.pkg.tar.zst
 ```
 
 ### Step 5: Update System Packages
@@ -69,9 +69,9 @@ sudo pacman -U linux-fydetab-*.pkg.tar.zst linux-fydetab-headers-*.pkg.tar.zst
 paru -Syu
 ```
 
-If paru tries to replace `linux-fydetab`:
+If paru tries to replace `linux-fydetab-itztweak`:
 ```bash
-paru -Syu --ignore linux-fydetab,linux-fydetab-headers
+paru -Syu --ignore linux-fydetab-itztweak,linux-fydetab-itztweak-headers
 ```
 
 ### Step 6: Reboot
@@ -105,7 +105,7 @@ See [[Recovery]] for U-Boot recovery procedures.
 ### Package Conflicts
 
 ```bash
-paru -Syu --ignore linux-fydetab,linux-fydetab-headers
+paru -Syu --ignore linux-fydetab-itztweak,linux-fydetab-itztweak-headers
 ```
 
 ## SD Card Testing Workflow

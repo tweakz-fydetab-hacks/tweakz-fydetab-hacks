@@ -19,6 +19,7 @@ The FydeTab Duo is a 12.4" tablet based on the Rockchip RK3588S SoC. Key hardwar
 ## Quick Links
 
 - **[Installation](Installation)** - Flash image and first boot
+- **[Waydroid](Waydroid)** - Running Android apps with Panthor GPU
 - **[GPU Driver Fix](GPU-Driver-Fix)** - Making GPU work with open-source drivers
 - **[Recovery](Recovery)** - Boot recovery options
 - **[Update Procedure](Update-Procedure)** - Safe kernel update workflow
@@ -36,6 +37,7 @@ The FydeTab Duo is a 12.4" tablet based on the Rockchip RK3588S SoC. Key hardwar
 | Bluetooth | Working | btusb |
 | Sound | Partial | HDMI works, speakers need config |
 | USB-C | Working | Charging + data |
+| Waydroid | Working | Android apps via Panthor GPU |
 | Suspend | Untested | |
 
 ## Project Structure

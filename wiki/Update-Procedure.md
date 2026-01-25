@@ -33,14 +33,14 @@ sudo cp /boot/initramfs-linux-fydetab-itztweak.img /boot/initramfs-linux-fydetab
 If updating kernel version:
 
 ```bash
-cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
+cd ~/repos/tweakz-fydetab-hacks/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
 # Check PKGBUILD for source URL and update _commit or version
 ```
 
 ### Step 3: Rebuild Kernel
 
 ```bash
-cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
+cd ~/repos/tweakz-fydetab-hacks/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
 ./build.sh clean    # Fresh build
 # OR
 ./build.sh          # Incremental build
@@ -54,7 +54,7 @@ ls -la *.pkg.tar.zst
 ### Step 4: Install New Kernel
 
 ```bash
-cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
+cd ~/repos/tweakz-fydetab-hacks/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
 sudo pacman -U linux-fydetab-itztweak-*.pkg.tar.zst
 ```
 
@@ -115,7 +115,7 @@ For safer kernel development:
 1. Build kernel as above
 2. Build SD card image:
    ```bash
-   cd ~/builds/tweakz-fydetab-hacks
+   cd ~/repos/tweakz-fydetab-hacks/tweakz-fydetab-hacks
    ./scripts/build-all.sh
    ```
 3. Flash to SD card

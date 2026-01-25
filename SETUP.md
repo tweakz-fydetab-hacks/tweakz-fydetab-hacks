@@ -43,7 +43,7 @@ This document walks through setting up the GitHub organization and repositories.
 ### Main Repository
 
 ```bash
-cd ~/builds/tweakz-fydetab-hacks
+cd ~/repos/tweakz-fydetab-hacks/tweakz-fydetab-hacks
 
 # Set up remote
 git remote add origin git@github.com:tweakz-fydetab-hacks/tweakz-fydetab-hacks.git
@@ -57,10 +57,10 @@ git push -u origin main
 
 ### Update Existing pkgbuilds
 
-Your local pkgbuilds at `~/builds/pkgbuilds` has uncommitted changes.
+Your local pkgbuilds at `~/repos/tweakz-fydetab-hacks/tweakz-fydetab-hacks/pkgbuilds` has uncommitted changes.
 
 ```bash
-cd ~/builds/pkgbuilds
+cd ~/repos/tweakz-fydetab-hacks/tweakz-fydetab-hacks/pkgbuilds
 
 # Update remote to point to your fork
 git remote set-url origin git@github.com:tweakz-fydetab-hacks/pkgbuilds.git
@@ -83,7 +83,7 @@ git push -u origin main
 ### Update Existing images
 
 ```bash
-cd ~/builds/fydetab-images
+cd ~/repos/tweakz-fydetab-hacks/tweakz-fydetab-hacks/images
 
 # Update remote
 git remote set-url origin git@github.com:tweakz-fydetab-hacks/images.git
@@ -105,7 +105,7 @@ git push -u origin main
 After pushing both forks:
 
 ```bash
-cd ~/builds/tweakz-fydetab-hacks
+cd ~/repos/tweakz-fydetab-hacks/tweakz-fydetab-hacks
 
 # Remove the .gitmodules placeholder
 rm .gitmodules
@@ -133,7 +133,7 @@ git push
 
 ```bash
 # Clone the wiki repo
-cd ~/builds
+cd ~/repos/tweakz-fydetab-hacks
 git clone git@github.com:tweakz-fydetab-hacks/tweakz-fydetab-hacks.wiki.git
 
 # Copy prepared content

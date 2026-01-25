@@ -154,7 +154,7 @@ sudo reboot
 If you have a working Arch installation on eMMC and just want the custom kernel:
 
 ```bash
-cd ~/builds/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
+cd ~/repos/tweakz-fydetab-hacks/tweakz-fydetab-hacks/pkgbuilds/linux-fydetab-itztweak
 sudo pacman -U linux-fydetab-itztweak-*.pkg.tar.zst
 ```
 

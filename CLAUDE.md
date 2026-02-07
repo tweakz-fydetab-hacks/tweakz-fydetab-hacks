@@ -116,6 +116,11 @@ pkgbuilds/waydroid-panthor-config -> github.com/tweakz-fydetab-hacks/waydroid-pa
 images/ -> github.com/tweakz-fydetab-hacks/fydetab-images
 ```
 
+## Git & PR Rules
+
+- **NEVER create PRs against upstream/forked-from repos.** All PRs must target repos owned by `tweakz-fydetab-hacks` (or the user's personal account). Only open PRs against upstream repos if explicitly requested.
+- When using `gh pr create`, always verify the target repo is correct — do NOT rely on the default remote if the repo is a fork.
+
 ## Workflow Notes
 
 - **Testing**: Always test kernel changes on SD card before installing to eMMC

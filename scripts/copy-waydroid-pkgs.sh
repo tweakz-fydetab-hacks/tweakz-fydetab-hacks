@@ -73,7 +73,7 @@ else
 fi
 
 # Set ownership
-sudo chown -R 1000:1000 "$PKGS_DEST"
+sudo chown -R 1001:1001 "$PKGS_DEST"
 
 echo ""
 if [ $FOUND_PKGS -gt 0 ]; then

@@ -30,6 +30,7 @@ log_error() {
 
 # Parse arguments
 CLEAN_BUILD=false
+SKIP_KERNEL=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -37,11 +38,16 @@ while [[ $# -gt 0 ]]; do
             CLEAN_BUILD=true
             shift
             ;;
+        skip-kernel)
+            SKIP_KERNEL=true
+            shift
+            ;;
         -h|--help)
-            echo "Usage: $0 [clean]"
+            echo "Usage: $0 [clean] [skip-kernel]"
             echo ""
             echo "Options:"
-            echo "  clean    Clean build (removes src/pkg directories)"
+            echo "  clean        Clean build (removes src/pkg directories)"
+            echo "  skip-kernel  Skip kernel build (uses existing kernel packages)"
             echo ""
             echo "This script builds:"
             echo "  1. Kernel packages (linux-fydetab-itztweak)"
@@ -62,16 +68,20 @@ START_TIME=$(date +%s)
 # Step 1: Build packages
 log_step "Step 1: Building Packages"
 
-if [ "$CLEAN_BUILD" = true ]; then
-    "$SCRIPT_DIR/build-packages.sh" clean
-else
-    "$SCRIPT_DIR/build-packages.sh"
-fi
+BUILD_PKG_ARGS=""
+[ "$CLEAN_BUILD" = true ] && BUILD_PKG_ARGS="$BUILD_PKG_ARGS clean"
+[ "$SKIP_KERNEL" = true ] && BUILD_PKG_ARGS="$BUILD_PKG_ARGS skip-kernel"
+
+"$SCRIPT_DIR/build-packages.sh" $BUILD_PKG_ARGS
 
 # Step 2: Build image
 log_step "Step 2: Building Image"
 
-"$SCRIPT_DIR/build-image.sh"
+if [ "$CLEAN_BUILD" = true ]; then
+    "$SCRIPT_DIR/build-image.sh" clean
+else
+    "$SCRIPT_DIR/build-image.sh"
+fi
 
 # Done
 END_TIME=$(date +%s)

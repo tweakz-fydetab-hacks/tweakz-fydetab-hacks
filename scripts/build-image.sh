@@ -27,11 +27,36 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# Parse arguments
+CLEAN_BUILD=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        clean)
+            CLEAN_BUILD=true
+            shift
+            ;;
+        *)
+            log_error "Unknown option: $1"
+            echo "Usage: $0 [clean]"
+            exit 1
+            ;;
+    esac
+done
+
 # Check if images submodule is initialized
 if [ ! -d "$IMAGES_DIR/fydetab-arch" ]; then
     log_error "images submodule not initialized"
     log_info "Run: git submodule update --init --recursive"
     exit 1
+fi
+
+# Clean if requested
+if [ "$CLEAN_BUILD" = true ]; then
+    log_info "Clean build requested, removing local-pkgs, work, and out..."
+    rm -rf "$LOCAL_PKGS_DIR"
+    # work/ and out/ contain root-owned files from ImageForge chroot
+    sudo rm -rf "$IMAGES_DIR/work" "$IMAGES_DIR/out"
 fi
 
 # Create local packages directory
@@ -49,13 +74,24 @@ copy_local_packages() {
     fi
 
     # Other packages (if built locally) - check both .zst and uncompressed .tar
-    for pkg_dir in mutter fydetabduo-post-install waydroid-panthor-images; do
+    for pkg_dir in paru-bin waydroid-panthor-config waydroid-panthor-images mutter fydetabduo-post-install; do
         if ls "$PKGBUILDS_DIR/$pkg_dir/"*.pkg.tar.zst 1>/dev/null 2>&1; then
             cp -v "$PKGBUILDS_DIR/$pkg_dir/"*.pkg.tar.zst "$LOCAL_PKGS_DIR/"
         elif ls "$PKGBUILDS_DIR/$pkg_dir/"*.pkg.tar 1>/dev/null 2>&1; then
             cp -v "$PKGBUILDS_DIR/$pkg_dir/"*.pkg.tar "$LOCAL_PKGS_DIR/"
         fi
     done
+
+    # AUR cache packages (pre-built AUR packages not in standard repos)
+    if [ -d "$PKGBUILDS_DIR/aur-cache" ]; then
+        for pkg_dir in "$PKGBUILDS_DIR/aur-cache"/*/; do
+            if ls "$pkg_dir"*.pkg.tar.zst 1>/dev/null 2>&1; then
+                cp -v "$pkg_dir"*.pkg.tar.zst "$LOCAL_PKGS_DIR/"
+            elif ls "$pkg_dir"*.pkg.tar 1>/dev/null 2>&1; then
+                cp -v "$pkg_dir"*.pkg.tar "$LOCAL_PKGS_DIR/"
+            fi
+        done
+    fi
 
     # Rebuild package database from scratch to avoid stale entries
     log_info "Rebuilding local package database..."

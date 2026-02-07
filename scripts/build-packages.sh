@@ -35,6 +35,7 @@ fi
 # Parse arguments
 CLEAN_BUILD=false
 KERNEL_ONLY=false
+SKIP_KERNEL=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -46,9 +47,13 @@ while [[ $# -gt 0 ]]; do
             KERNEL_ONLY=true
             shift
             ;;
+        skip-kernel)
+            SKIP_KERNEL=true
+            shift
+            ;;
         *)
             log_error "Unknown option: $1"
-            echo "Usage: $0 [clean] [kernel-only]"
+            echo "Usage: $0 [clean] [kernel-only] [skip-kernel]"
             exit 1
             ;;
     esac
@@ -90,7 +95,7 @@ build_package() {
     cd "$pkg_dir"
 
     if [ "$CLEAN_BUILD" = true ]; then
-        rm -rf src pkg
+        rm -rf src pkg *.pkg.tar.zst
     fi
 
     makepkg -sf --noconfirm
@@ -107,10 +112,22 @@ log_info "Starting package build..."
 log_info "Root directory: $ROOT_DIR"
 log_info "PKGBUILDs directory: $PKGBUILDS_DIR"
 
-# Always build kernel
-build_kernel
+# Build kernel unless skipped
+if [ "$SKIP_KERNEL" = true ]; then
+    log_info "Skipping kernel build (skip-kernel flag set)"
+    # Verify kernel packages exist from a previous build
+    if ! ls "$PKGBUILDS_DIR/linux-fydetab-itztweak"/linux-fydetab-itztweak-*.pkg.tar.zst 1>/dev/null 2>&1; then
+        log_error "No existing kernel packages found. Cannot skip kernel build on first run."
+        exit 1
+    fi
+else
+    build_kernel
+fi
 
 if [ "$KERNEL_ONLY" = false ]; then
+    # Build paru-bin (AUR helper, built locally to match libalpm version)
+    build_package "paru-bin"
+
     # Build waydroid-panthor-images (Android system/vendor images)
     build_package "waydroid-panthor-images"
 

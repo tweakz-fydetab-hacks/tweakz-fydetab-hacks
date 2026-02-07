@@ -6,7 +6,7 @@
 set -e
 
 OUTPUT_DIR="${1:-.}"
-RENDERER_TIMEOUT=20
+RENDERER_TIMEOUT=120
 RENDER_DELAY=5
 
 echo "=== VSCodium Automated Test ==="

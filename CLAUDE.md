@@ -10,10 +10,11 @@ This is the main repository for the tweakz-fydetab-hacks project - a personal do
 
 ```
 tweakz-fydetab-hacks/
-├── pkgbuilds/                      # Package submodules
-│   ├── linux-fydetab-itztweak/     # Custom kernel
-│   ├── waydroid-panthor-images/    # Waydroid Android images
-│   └── waydroid-panthor-config/    # Waydroid services
+├── pkgbuilds/                      # Package submodules and local builds
+│   ├── linux-fydetab-itztweak/     # Custom kernel (submodule)
+│   ├── waydroid-panthor-images/    # Waydroid Android images (submodule)
+│   ├── waydroid-panthor-config/    # Waydroid services (submodule)
+│   └── paru-bin/                   # AUR helper (local, matches libalpm)
 ├── images/                         # Submodule: ImageForge build profiles
 ├── scripts/                        # Build automation scripts
 │   └── tests/                      # Hardware test scripts
@@ -123,6 +124,7 @@ images/ -> github.com/tweakz-fydetab-hacks/fydetab-images
 - **Testing**: Always test kernel changes on SD card before installing to eMMC
 - **Logs**: Build logs are saved to `pkgbuilds/linux-fydetab-itztweak/logs/`
 - **Recovery**: Keep a bootable SD card ready when doing kernel development
+- **pkgrel**: Never increment `pkgrel` in any PKGBUILD. Version bumps are handled by an upstream build server. Only change `pkgver` if the actual upstream source version changes.
 
 ## Test Framework
 
@@ -131,7 +133,14 @@ Test scripts are development tools for verifying hardware after image builds.
 ### SD Card Test Workflow
 
 ```sh
-# After flashing image
+# Flash + remount + copy everything in one shot (AFK-friendly)
+./scripts/flash-sd.sh --device /dev/mmcblk1 --yes && \
+  sudo partprobe /dev/mmcblk1 && sleep 3 && \
+  udisksctl mount -b /dev/mmcblk1p3 && \
+  ./scripts/copy-test-scripts.sh && \
+  ./scripts/copy-waydroid-pkgs.sh
+
+# Or step by step:
 ./scripts/flash-sd.sh
 ./scripts/copy-test-scripts.sh
 ./scripts/copy-waydroid-pkgs.sh  # optional
@@ -148,6 +157,9 @@ Test scripts are development tools for verifying hardware after image builds.
 **Mount point:** `/run/media/$USER/ROOTFS`
 **Test results:** `/run/media/$USER/ROOTFS/@home/arch/test-results/<timestamp>/`
 **Test scripts:** `/run/media/$USER/ROOTFS/@home/arch/tests/`
+**Screenshots:** `/run/media/$USER/ROOTFS/@home/arch/Pictures/Screenshots/` (manual user screenshots)
+
+**Note:** The arch user has UID 1001 (not 1000). When analyzing SD card files, check both test-results and the Pictures/Screenshots directory for any manual screenshots taken during testing.
 
 ### Available Tests
 

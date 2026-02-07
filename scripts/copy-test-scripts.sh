@@ -57,15 +57,15 @@ sudo find "$TESTS_DEST" -name "*.sh" -exec chmod +x {} +
 RESULTS_DEST="$SD_HOME/test-results"
 sudo mkdir -p "$RESULTS_DEST"
 
-# Set ownership to arch user (uid 1000)
+# Set ownership to arch user (uid 1001)
 echo "Setting ownership..."
-sudo chown -R 1000:1000 "$TESTS_DEST"
-sudo chown -R 1000:1000 "$RESULTS_DEST"
+sudo chown -R 1001:1001 "$TESTS_DEST"
+sudo chown -R 1001:1001 "$RESULTS_DEST"
 
 # Create symlink for convenience
 if [ ! -e "$SD_HOME/run-tests" ]; then
     sudo ln -sf tests/run-all-tests.sh "$SD_HOME/run-tests"
-    sudo chown -h 1000:1000 "$SD_HOME/run-tests"
+    sudo chown -h 1001:1001 "$SD_HOME/run-tests"
 fi
 
 echo ""

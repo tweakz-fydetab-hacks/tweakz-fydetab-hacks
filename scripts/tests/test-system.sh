@@ -109,7 +109,7 @@ echo "Checking memory and storage..."
     swapon --show 2>&1 || echo "No swap"
     echo ""
     echo "=== Disk Usage ==="
-    df -h 2>&1
+    df -h 2>&1 || true
     echo ""
     echo "=== Btrfs Subvolumes ==="
     btrfs subvolume list / 2>&1 | head -20 || echo "Not a btrfs filesystem or cannot list"

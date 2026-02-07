@@ -156,6 +156,48 @@ echo "Checking waydroid-panthor-init service..."
     journalctl -u waydroid-panthor-init --no-pager -n 50 2>&1 || true
 } > "${OUTPUT_DIR}/waydroid-panthor-init.txt"
 
+# Check waydroid-container service (required for session start)
+echo "Checking waydroid-container service..."
+{
+    echo "=== waydroid-container.service ==="
+    systemctl status waydroid-container.service --no-pager 2>&1 || echo "Service not found"
+    echo ""
+    echo "=== Enabled state ==="
+    systemctl is-enabled waydroid-container.service 2>&1 || echo "Not installed"
+    echo ""
+    echo "=== Service journal ==="
+    journalctl -u waydroid-container.service --no-pager -n 50 2>&1 || true
+} > "${OUTPUT_DIR}/waydroid-container.txt"
+
+CONTAINER_ENABLED=$(systemctl is-enabled waydroid-container.service 2>/dev/null || echo "not-found")
+CONTAINER_ACTIVE=$(systemctl is-active waydroid-container.service 2>/dev/null || echo "inactive")
+if [ "$CONTAINER_ACTIVE" = "active" ]; then
+    echo "PASS: waydroid-container.service is running"
+elif [ "$CONTAINER_ENABLED" = "enabled" ]; then
+    echo "WARN: waydroid-container.service is enabled but not running"
+else
+    echo "FAIL: waydroid-container.service is not enabled (sessions cannot start)"
+fi
+
+# Check actual waydroid status (catches runtime failures missed by service checks)
+echo "Checking waydroid session status..."
+{
+    echo "=== Waydroid Status ==="
+    waydroid status 2>&1 || echo "waydroid status command failed"
+} > "${OUTPUT_DIR}/waydroid-status.txt"
+
+cat "${OUTPUT_DIR}/waydroid-status.txt"
+
+WAYDROID_CONTAINER_RUNNING=0
+if grep -qi "Container.*RUNNING" "${OUTPUT_DIR}/waydroid-status.txt" 2>/dev/null; then
+    echo "PASS: Waydroid container is RUNNING"
+    WAYDROID_CONTAINER_RUNNING=1
+elif grep -qi "Container.*FROZEN" "${OUTPUT_DIR}/waydroid-status.txt" 2>/dev/null; then
+    echo "WARN: Waydroid container is FROZEN"
+else
+    echo "FAIL: Waydroid container is NOT running"
+fi
+
 # Try remediation if binder is not working
 echo "Attempting remediation if needed..."
 {
@@ -209,11 +251,14 @@ cat "${OUTPUT_DIR}/remediation.txt"
 # Final status
 echo ""
 echo "=== Waydroid Test Summary ==="
-if [ -d /dev/binderfs ] && [ -e /dev/binder ] && [ -f /var/lib/waydroid/waydroid.cfg ]; then
-    echo "PASS: Waydroid appears properly configured"
+CONTAINER_OK=$(systemctl is-enabled waydroid-container.service 2>/dev/null || echo "not-found")
+if [ -d /dev/binderfs ] && [ -e /dev/binder ] && [ -f /var/lib/waydroid/waydroid.cfg ] && [ "$CONTAINER_OK" = "enabled" ] && [ "$WAYDROID_CONTAINER_RUNNING" -eq 1 ]; then
+    echo "PASS: Waydroid is running"
     echo "  binderfs: mounted"
     echo "  binder devices: present"
     echo "  waydroid: initialized"
+    echo "  container service: enabled"
+    echo "  container status: RUNNING"
     echo ""
     echo "Waydroid test completed"
     exit 0
@@ -222,6 +267,8 @@ else
     [ ! -d /dev/binderfs ] && echo "  - binderfs not mounted"
     [ ! -e /dev/binder ] && echo "  - /dev/binder missing"
     [ ! -f /var/lib/waydroid/waydroid.cfg ] && echo "  - waydroid not initialized"
+    [ "$CONTAINER_OK" != "enabled" ] && echo "  - waydroid-container.service not enabled"
+    [ "$WAYDROID_CONTAINER_RUNNING" -ne 1 ] && echo "  - waydroid container not running (check 'waydroid status')"
     echo ""
     echo "Waydroid test completed"
     exit 1

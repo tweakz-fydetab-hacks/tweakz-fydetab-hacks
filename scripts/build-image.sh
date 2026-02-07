@@ -113,23 +113,28 @@ copy_local_packages() {
     fi
 }
 
-# Update pacman.conf with correct local repo path
+# Update pacman.conf with correct local repo path (placeholder -> absolute path)
+PACMAN_CONF="$IMAGES_DIR/fydetab-arch/pacman.conf.aarch64"
+
 update_pacman_conf() {
-    local pacman_conf="$IMAGES_DIR/fydetab-arch/pacman.conf.aarch64"
     local abs_local_dir="$(cd "$LOCAL_PKGS_DIR" && pwd)"
 
-    if grep -q "__LOCAL_PKGS_DIR__" "$pacman_conf"; then
-        log_info "Updating local repo path in pacman.conf..."
-        sed -i "s|__LOCAL_PKGS_DIR__|$abs_local_dir|" "$pacman_conf"
-        log_info "Local repo path set to: $abs_local_dir"
-    elif grep -q "\[fydetab-local\]" "$pacman_conf"; then
-        log_info "Updating local repo path in pacman.conf..."
-        sed -i "s|Server = file://.*local-pkgs|Server = file://$abs_local_dir|" "$pacman_conf"
-        log_info "Local repo path updated to: $abs_local_dir"
+    if grep -q "__LOCAL_PKGS_DIR__" "$PACMAN_CONF"; then
+        log_info "Setting local repo path in pacman.conf to: $abs_local_dir"
+        sed -i "s|__LOCAL_PKGS_DIR__|$abs_local_dir|" "$PACMAN_CONF"
     else
-        log_warn "[fydetab-local] section not found in pacman.conf"
+        log_warn "__LOCAL_PKGS_DIR__ placeholder not found in pacman.conf"
     fi
 }
+
+# Restore placeholder so the tracked file stays clean
+restore_pacman_conf() {
+    local abs_local_dir="$(cd "$LOCAL_PKGS_DIR" && pwd)"
+    sed -i "s|$abs_local_dir|__LOCAL_PKGS_DIR__|" "$PACMAN_CONF"
+    log_info "Restored __LOCAL_PKGS_DIR__ placeholder in pacman.conf"
+}
+
+trap restore_pacman_conf EXIT
 
 # Build the image
 build_image() {
